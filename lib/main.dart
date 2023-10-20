@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 final Color mainColor = Color(0xFFFF5656);
 
 void main() {
-  runApp(MaterialApp(
-      debugShowCheckedModeBanner: false, home: DetailsPage() //SplashPage
-      ));
+  runApp(MaterialApp(debugShowCheckedModeBanner: false, home: SplashPage()));
 }
 
 // SPLASH PAGE
@@ -90,9 +88,12 @@ class MountsApp extends StatelessWidget {
 
 // DETAILS PAGE
 class DetailsPage extends StatelessWidget {
+  MountModel mount;
+  DetailsPage(this.mount);
+
   @override
   Widget build(BuildContext context) {
-    var selectedItem = mountItems[0];
+    var selectedItem = mount;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -170,7 +171,33 @@ class DetailsPage extends StatelessWidget {
           ),
           Expanded(
             child: Column(
-              children: [DetailsRatingBar(), Expanded()],
+              children: [
+                DetailsRatingBar(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                          // Text widget with the name title
+
+                          child: Text('About ${selectedItem.name}',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold))),
+                      Padding(
+                          padding:
+                              EdgeInsets.only(left: 20, right: 20, bottom: 20),
+                          child: Text('${selectedItem.description}',
+                              style: TextStyle(fontSize: 12)))
+                    ],
+                  ),
+                ),
+                DetailsBottomActions()
+              ],
             ),
           )
         ],
@@ -295,6 +322,47 @@ class DetailsRatingBar extends StatelessWidget {
   }
 }
 
+// DetailsBottomActions Widget
+
+class DetailsBottomActions extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(left: 20, right: 20, bottom: 20),
+      child: Row(
+        children: [
+          Expanded(
+              child: Material(
+                  borderRadius: BorderRadius.circular(15),
+                  color: mainColor,
+                  child: InkWell(
+                    highlightColor: Colors.white.withOpacity(0.2),
+                    splashColor: Colors.white.withOpacity(0.2),
+                    onTap: () {},
+                    child: Container(
+                        padding: EdgeInsets.all(21),
+                        child: Text(
+                          'Book Now',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.white),
+                        )),
+                  ))),
+          Container(
+            margin: EdgeInsets.only(left: 10),
+            padding: EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              color: Colors.white,
+              border: Border.all(color: mainColor, width: 2),
+            ),
+            child: Icon(Icons.turned_in_not, color: mainColor, size: 25),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 // ===============APP MOUNT VIEW=================//
 class AppMountListView extends StatelessWidget {
   @override
@@ -309,28 +377,34 @@ class AppMountListView extends StatelessWidget {
 
             MountModel currentMount = mountItems[index];
 
-            return Container(
-              alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.all(20),
-              margin: EdgeInsets.all(10),
-              width: 150,
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  image: DecorationImage(
-                      image: NetworkImage(currentMount.path),
-                      fit: BoxFit.cover)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(currentMount.name,
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold)),
-                  Text(
-                    currentMount.location,
-                    style: TextStyle(color: Colors.white),
-                  )
-                ],
+            return GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => DetailsPage(currentMount)));
+              },
+              child: Container(
+                alignment: Alignment.bottomLeft,
+                padding: EdgeInsets.all(20),
+                margin: EdgeInsets.all(10),
+                width: 150,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    image: DecorationImage(
+                        image: NetworkImage(currentMount.path),
+                        fit: BoxFit.cover)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(currentMount.name,
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold)),
+                    Text(
+                      currentMount.location,
+                      style: TextStyle(color: Colors.white),
+                    )
+                  ],
+                ),
               ),
             );
           }),
